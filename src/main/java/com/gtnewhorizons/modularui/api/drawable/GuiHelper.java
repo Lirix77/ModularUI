@@ -465,12 +465,12 @@ public class GuiHelper {
         if (tooltips.size() > 0) {
             tooltips.set(0, tooltips.get(0) + GuiDraw.TOOLTIP_LINESPACE); // add space after 'title'
         }
-        applyNEITooltipHandler(tooltips, stack, context);
+        // applyNEITooltipHandler(tooltips, stack, context);
         return tooltips;
     }
 
     private static void applyNEITooltipHandler(List<String> tooltip, ItemStack stack, ModularUIContext context) {
-        GuiContainerManager.applyItemCountDetails(tooltip, stack);
+        // GuiContainerManager.applyItemCountDetails(tooltip, stack);
 
         if (GuiContainerManager.getManager() == null) return;
         if (GuiContainerManager.shouldShowTooltip(context.getScreen())) {
