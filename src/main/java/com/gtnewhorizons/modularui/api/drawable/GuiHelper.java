@@ -33,7 +33,6 @@ import com.gtnewhorizons.modularui.api.math.Pos2d;
 import com.gtnewhorizons.modularui.api.math.Size;
 import com.gtnewhorizons.modularui.api.screen.ModularUIContext;
 import com.gtnewhorizons.modularui.common.internal.wrapper.ModularGui;
-import com.mitchej123.hodgepodge.textures.IPatchedTextureAtlasSprite;
 
 import codechicken.lib.gui.GuiDraw;
 import codechicken.nei.guihook.GuiContainerManager;
@@ -308,10 +307,6 @@ public class GuiHelper {
                 errorFluids.add(fluid);
             }
             return;
-        }
-
-        if (ModularUI.isHodgepodgeLoaded && fluidStill instanceof IPatchedTextureAtlasSprite) {
-            ((IPatchedTextureAtlasSprite) fluidStill).markNeedsAnimationUpdate();
         }
 
         GlStateManager.disableLighting();

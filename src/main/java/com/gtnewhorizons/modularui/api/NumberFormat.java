@@ -7,10 +7,6 @@ import java.util.TreeMap;
 
 import org.jetbrains.annotations.NotNull;
 
-import com.gtnewhorizons.modularui.ModularUI;
-
-import appeng.util.ReadableNumberConverter;
-
 public class NumberFormat {
 
     private static final NavigableMap<Double, String> suffixesByPower = new TreeMap<>();
@@ -64,9 +60,6 @@ public class NumberFormat {
 
     @NotNull
     public static String formatLong(long value) {
-        if (ModularUI.isAE2Loaded) {
-            return ReadableNumberConverter.INSTANCE.toWideReadableForm(value);
-        }
         return format(value, 3);
     }
 

@@ -48,7 +48,6 @@ public class ModularUI {
     public static final String MODID_NEI = "NotEnoughItems";
     public static final String MODID_GT6 = "gregapi_post";
     public static final boolean isGT5ULoaded = Loader.isModLoaded(MODID_GT5U) && !Loader.isModLoaded(MODID_GT6);
-    public static final boolean isHodgepodgeLoaded = Loader.isModLoaded("hodgepodge");
     public static final boolean isAE2Loaded = Loader.isModLoaded("appliedenergistics2");
 
     public static final boolean isNEILoaded = Loader.isModLoaded("NotEnoughItems");
