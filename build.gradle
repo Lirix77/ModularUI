@@ -592,6 +592,10 @@ repositories {
         url 'https://gregtech.overminddl1.com/'
     }
     maven {
+        name 'SpongePowered'
+        url 'https://repo.spongepowered.org/maven/'
+    }
+    maven {
         name = "GTNH Maven"
         url = "http://jenkins.usrv.eu:8081/nexus/content/groups/public/"
         allowInsecureProtocol = true
