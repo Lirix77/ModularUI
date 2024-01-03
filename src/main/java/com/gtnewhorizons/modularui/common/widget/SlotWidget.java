@@ -48,6 +48,7 @@ import com.gtnewhorizons.modularui.common.internal.wrapper.BaseSlot;
 import com.gtnewhorizons.modularui.common.internal.wrapper.GuiContainerAccessor;
 import com.gtnewhorizons.modularui.common.internal.wrapper.ModularGui;
 
+import codechicken.nei.ItemList;
 import codechicken.nei.LayoutManager;
 import codechicken.nei.SearchField;
 import cpw.mods.fml.relauncher.Side;
@@ -610,8 +611,8 @@ public class SlotWidget extends Widget implements IVanillaSlot, Interactable, IS
      */
     protected void renderSlotOverlayNEI() {
         ItemStack item = slot.getStack();
-        if (SearchField.searchInventories() && (item == null ? !getSearchExpression().equals("")
-                : !LayoutManager.searchField.getFilter().matches(item))) {
+        if (SearchField.searchInventories()
+                && (item == null ? !getSearchExpression().equals("") : !ItemList.getItemListFilter().matches(item))) {
             GL11.glDisable(GL11.GL_LIGHTING);
             GL11.glDisable(GL11.GL_DEPTH_TEST);
             GL11.glTranslatef(0, 0, 150);

@@ -19,8 +19,6 @@ import org.jetbrains.annotations.NotNull;
 import com.gtnewhorizons.modularui.api.drawable.Text;
 import com.gtnewhorizons.modularui.common.fluid.IOverflowableTank;
 
-import codechicken.nei.guihook.GuiContainerManager;
-import codechicken.nei.recipe.StackInfo;
 import gregtech.api.util.GT_Utility;
 import gregtech.common.items.GT_FluidDisplayItem;
 
@@ -51,7 +49,7 @@ public interface FluidInteractionUtil {
         if (isGT5ULoaded) {
             return GT_Utility.getFluidFromContainerOrFluidDisplay(itemStack);
         } else {
-            return StackInfo.getFluid(itemStack);
+            return null;
         }
     }
 
@@ -122,11 +120,29 @@ public interface FluidInteractionUtil {
                             "modularui.fluid.state",
                             fluid.getFluid().isGaseous(fluid) ? StatCollector.translateToLocal("modularui.fluid.gas")
                                     : StatCollector.translateToLocal("modularui.fluid.liquid")));
-            String amountDetail = GuiContainerManager.fluidAmountDetails(fluid);
+            String amountDetail = countDetails(
+                    fluid.amount,
+                    144,
+                    "Amount: %s L = %s * %s L + %s L",
+                    "Amount: %s L = %s * %s L");
             if (amountDetail != null) {
                 tooltipContainer.add(new Text(amountDetail).format(EnumChatFormatting.GRAY));
             }
         }
+    }
+
+    public static String countDetails(int stackSize, int maxStackSize, String fullPattern, String shortPattern) {
+        if (maxStackSize > 1 && stackSize > maxStackSize) {
+            final int remainder = stackSize % maxStackSize;
+
+            if (remainder > 0) {
+                return String.format(fullPattern, stackSize, stackSize / maxStackSize, maxStackSize, remainder);
+            } else {
+                return String.format(shortPattern, stackSize, stackSize / maxStackSize, maxStackSize);
+            }
+        }
+
+        return null;
     }
 
     default int getRealCapacity(IFluidTank fluidTank) {

@@ -1,5 +1,6 @@
 package com.gtnewhorizons.modularui.api.drawable;
 
+import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -461,22 +462,32 @@ public class GuiHelper {
         if (tooltips.size() > 0) {
             tooltips.set(0, tooltips.get(0) + GuiDraw.TOOLTIP_LINESPACE); // add space after 'title'
         }
-        // applyNEITooltipHandler(tooltips, stack, context);
+        applyNEITooltipHandler(tooltips, stack, context);
         return tooltips;
     }
 
     private static void applyNEITooltipHandler(List<String> tooltip, ItemStack stack, ModularUIContext context) {
-        // GuiContainerManager.applyItemCountDetails(tooltip, stack);
+        //GuiContainerManager.applyItemCountDetails(tooltip, stack);
 
         if (GuiContainerManager.getManager() == null) return;
         if (GuiContainerManager.shouldShowTooltip(context.getScreen())) {
-            for (IContainerTooltipHandler handler : GuiContainerManager.getManager().instanceTooltipHandlers)
-                tooltip = handler.handleItemTooltip(
-                        context.getScreen(),
-                        stack,
-                        context.getCursor().getX(),
-                        context.getCursor().getY(),
-                        tooltip);
+            GuiContainerManager.getManager();
+            Field tt;
+            try {
+                tt = GuiContainerManager.class.getDeclaredField("instanceTooltipHandlers");
+                tt.setAccessible(true);
+                for (IContainerTooltipHandler handler : (List<IContainerTooltipHandler>) tt
+                        .get(GuiContainerManager.getManager())) {
+                    tooltip = handler.handleItemTooltip(
+                            context.getScreen(),
+                            stack,
+                            context.getCursor().getX(),
+                            context.getCursor().getY(),
+                            tooltip);
+                }
+            } catch (NoSuchFieldException | IllegalAccessException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }
