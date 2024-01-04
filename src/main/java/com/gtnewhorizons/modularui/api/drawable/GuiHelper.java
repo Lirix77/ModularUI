@@ -467,7 +467,7 @@ public class GuiHelper {
     }
 
     private static void applyNEITooltipHandler(List<String> tooltip, ItemStack stack, ModularUIContext context) {
-        //GuiContainerManager.applyItemCountDetails(tooltip, stack);
+        // GuiContainerManager.applyItemCountDetails(tooltip, stack);
 
         if (GuiContainerManager.getManager() == null) return;
         if (GuiContainerManager.shouldShowTooltip(context.getScreen())) {
