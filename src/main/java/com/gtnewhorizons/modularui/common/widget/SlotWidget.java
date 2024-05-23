@@ -1,8 +1,5 @@
 package com.gtnewhorizons.modularui.common.widget;
 
-import static codechicken.lib.gui.GuiDraw.drawRect;
-import static codechicken.nei.NEIClientConfig.getSearchExpression;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,7 +25,7 @@ import org.lwjgl.opengl.GL12;
 
 import com.gtnewhorizons.modularui.api.GlStateManager;
 import com.gtnewhorizons.modularui.api.ModularUITextures;
-import com.gtnewhorizons.modularui.api.NumberFormat;
+import com.gtnewhorizons.modularui.api.NumberFormatMUI;
 import com.gtnewhorizons.modularui.api.drawable.GuiHelper;
 import com.gtnewhorizons.modularui.api.drawable.Text;
 import com.gtnewhorizons.modularui.api.drawable.TextRenderer;
@@ -45,12 +42,10 @@ import com.gtnewhorizons.modularui.api.widget.Widget;
 import com.gtnewhorizons.modularui.common.internal.Theme;
 import com.gtnewhorizons.modularui.common.internal.network.NetworkUtils;
 import com.gtnewhorizons.modularui.common.internal.wrapper.BaseSlot;
-import com.gtnewhorizons.modularui.common.internal.wrapper.GuiContainerAccessor;
 import com.gtnewhorizons.modularui.common.internal.wrapper.ModularGui;
+import com.gtnewhorizons.modularui.mixins.GuiContainerAccessor;
 
-import codechicken.nei.ItemList;
-import codechicken.nei.LayoutManager;
-import codechicken.nei.SearchField;
+import codechicken.nei.guihook.GuiContainerManager;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -71,6 +66,7 @@ public class SlotWidget extends Widget implements IVanillaSlot, Interactable, IS
     private Function<List<String>, List<String>> overwriteItemStackTooltip;
 
     protected Consumer<Widget> onDragAndDropComplete;
+    private static final NumberFormatMUI numberFormat = new NumberFormatMUI();
 
     @Nullable
     private String sortAreaName = null;
@@ -479,8 +475,6 @@ public class SlotWidget extends Widget implements IVanillaSlot, Interactable, IS
      */
     @SideOnly(Side.CLIENT)
     protected void drawSlot(Slot slotIn, boolean drawStackSize) {
-        int x = slotIn.xDisplayPosition;
-        int y = slotIn.yDisplayPosition;
         ItemStack itemstack = getItemStackForRendering(slotIn);
         boolean flag = false;
         boolean flag1 = slotIn == getGuiAccessor().getClickedSlot() && getGuiAccessor().getDraggedStack() != null
@@ -531,6 +525,8 @@ public class SlotWidget extends Widget implements IVanillaSlot, Interactable, IS
                 ModularGui.drawSolidRect(1, 1, 16, 16, -2130706433);
             }
 
+            renderSlotUnderlayNEI(slotIn);
+
             if (itemstack != null) {
                 GlStateManager.enableRescaleNormal();
                 GlStateManager.enableLighting();
@@ -557,10 +553,8 @@ public class SlotWidget extends Widget implements IVanillaSlot, Interactable, IS
                     }
                     // render the amount overlay
                     if (amount > 1 || format != null) {
-                        String amountText = NumberFormat.format(amount, 2);
-                        if (format != null) {
-                            amountText = format + amountText;
-                        }
+                        String amountText = numberFormat
+                                .formatWithSuffix(amount, new StringBuffer(format == null ? "" : format)).toString();
                         float scale = 1f;
                         if (amountText.length() == 3) {
                             scale = 0.8f;
@@ -598,7 +592,7 @@ public class SlotWidget extends Widget implements IVanillaSlot, Interactable, IS
                 GlStateManager.disableDepth();
             }
 
-            renderSlotOverlayNEI();
+            renderSlotOverlayNEI(slotIn);
         }
 
         GL11.glDisable(GL11.GL_BLEND);
@@ -607,19 +601,42 @@ public class SlotWidget extends Widget implements IVanillaSlot, Interactable, IS
     }
 
     /**
-     * Adapted from {@link LayoutManager#renderSlotOverlay}
+     * Adapted from {@link GuiContainerManager#renderSlotUnderlay}
      */
-    protected void renderSlotOverlayNEI() {
-        ItemStack item = slot.getStack();
-        if (SearchField.searchInventories()
-                && (item == null ? !getSearchExpression().equals("") : !ItemList.getItemListFilter().matches(item))) {
-            GL11.glDisable(GL11.GL_LIGHTING);
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glTranslatef(0, 0, 150);
-            drawRect(0, 0, 16, 16, 0x80000000);
-            GL11.glTranslatef(0, 0, -150);
-            GL11.glEnable(GL11.GL_LIGHTING);
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
+    protected void renderSlotUnderlayNEI(Slot slotIn) {
+        final GuiContainerManager manager = GuiContainerManager.getManager();
+        final ModularGui screen = getScreen();
+
+        if (manager != null && manager.window == screen) {
+            final int xDisplayPosition = slotIn.xDisplayPosition;
+            final int yDisplayPosition = slotIn.yDisplayPosition;
+            slotIn.xDisplayPosition = 1;
+            slotIn.yDisplayPosition = 1;
+
+            manager.renderSlotUnderlay(slotIn);
+
+            slotIn.xDisplayPosition = xDisplayPosition;
+            slotIn.yDisplayPosition = yDisplayPosition;
+        }
+    }
+
+    /**
+     * Adapted from {@link GuiContainerManager#renderSlotOverlay}
+     */
+    protected void renderSlotOverlayNEI(Slot slotIn) {
+        final GuiContainerManager manager = GuiContainerManager.getManager();
+        final ModularGui screen = getScreen();
+
+        if (manager != null && manager.window == screen) {
+            final int xDisplayPosition = slotIn.xDisplayPosition;
+            final int yDisplayPosition = slotIn.yDisplayPosition;
+            slotIn.xDisplayPosition = 1;
+            slotIn.yDisplayPosition = 1;
+
+            manager.renderSlotOverlay(slotIn);
+
+            slotIn.xDisplayPosition = xDisplayPosition;
+            slotIn.yDisplayPosition = yDisplayPosition;
         }
     }
 }

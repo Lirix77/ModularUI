@@ -31,26 +31,27 @@ import cpw.mods.fml.relauncher.SideOnly;
 @Mod(
         modid = ModularUI.MODID,
         version = Tags.VERSION,
-        name = Tags.MODNAME,
+        name = "ModularUI",
         acceptedMinecraftVersions = "[1.7.10]",
         dependencies = ModularUI.DEPENDENCIES,
         guiFactory = ModularUI.GUI_FACTORY)
 public class ModularUI {
 
     public static final String MODID = "modularui";
-    public static final String DEPENDENCIES = "before:gregtech";
-    public static final String GUI_FACTORY = Tags.GROUPNAME + ".config.GuiFactory";
+    public static final String DEPENDENCIES = "required-after:NotEnoughItems@[2.3.50-GTNH,);"
+            + "after:hodgepodge@[2.0.0,);"
+            + "after:gtnhlib@[0.2.7,);"
+            + "before:gregtech";
+    public static final String GUI_FACTORY = "com.gtnewhorizons.modularui.config.GuiFactory";
 
-    public static final Logger logger = LogManager.getLogger(Tags.MODID);
+    public static final Logger logger = LogManager.getLogger(MODID);
 
     public static final String MODID_GT5U = "gregtech";
-
-    public static final String MODID_NEI = "NotEnoughItems";
     public static final String MODID_GT6 = "gregapi_post";
     public static final boolean isGT5ULoaded = Loader.isModLoaded(MODID_GT5U) && !Loader.isModLoaded(MODID_GT6);
+    public static final boolean isHodgepodgeLoaded = Loader.isModLoaded("hodgepodge");
     public static final boolean isAE2Loaded = Loader.isModLoaded("appliedenergistics2");
-
-    public static final boolean isNEILoaded = Loader.isModLoaded("NotEnoughItems");
+    public static final boolean isGTNHLibLoaded = Loader.isModLoaded("gtnhlib");
 
     public static final boolean isDevEnv = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment");
 
@@ -59,8 +60,8 @@ public class ModularUI {
 
     @SidedProxy(
             modId = MODID,
-            clientSide = Tags.GROUPNAME + ".ClientProxy",
-            serverSide = Tags.GROUPNAME + ".CommonProxy")
+            clientSide = "com.gtnewhorizons.modularui.ClientProxy",
+            serverSide = "com.gtnewhorizons.modularui.CommonProxy")
     public static CommonProxy proxy;
 
     @Mod.EventHandler

@@ -60,6 +60,20 @@ public class BaseTextFieldWidget extends Widget implements IWidgetParent, Intera
     public static final Pattern WHOLE_NUMS = Pattern.compile("-?[0-9]*([+\\-*/%^][0-9]*)*");
 
     public static final Pattern DECIMALS = Pattern.compile("[0-9]*(\\.[0-9]*)?([+\\-*/%^][0-9]*(\\.[0-9]*)?)*");
+
+    /**
+     * A mathematical expression. Supported:
+     * <ul>
+     * <li>digits: 0..9</li>
+     * <li>decimal point: .</li>
+     * <li>thousands separators: , _ [space]</li>
+     * <li>arithmetic operations: + - * / % ^</li>
+     * <li>decimal exponent: e E</li>
+     * <li>decimal suffixes: k K m M b B g G t T</li>
+     * </ul>
+     */
+    public static final Pattern MATH_EXPRESSION = Pattern.compile("[0-9.,_ +\\-*/%^eEkKmMgGbBtT]*");
+
     /**
      * alphabets
      */
@@ -183,6 +197,11 @@ public class BaseTextFieldWidget extends Widget implements IWidgetParent, Intera
         if (!isRightBelowMouse()) {
             return ClickResult.IGNORE;
         }
+        // Right click - clear
+        if (buttonId == 1) {
+            handler.getText().clear();
+            return ClickResult.SUCCESS;
+        }
         handler.setCursor(
                 renderer.getCursorPos(
                         handler.getText(),
@@ -268,16 +287,14 @@ public class BaseTextFieldWidget extends Widget implements IWidgetParent, Intera
             // mark whole text
             handler.markAll();
             return true;
-        } else if (BASE_PATTERN.matcher(String.valueOf(character)).matches()) {
-            if (handler.test(String.valueOf(character))) {
-                // delete selected chars
-                if (handler.hasTextMarked()) {
-                    handler.delete();
-                }
-                // insert typed char
-                handler.insert(String.valueOf(character));
-                return true;
+        } else if (handler.test(String.valueOf(character))) {
+            // delete selected chars
+            if (handler.hasTextMarked()) {
+                handler.delete();
             }
+            // insert typed char
+            handler.insert(String.valueOf(character));
+            return true;
         }
         if (Minecraft.getMinecraft().gameSettings.keyBindInventory.getKeyCode() == keyCode) {
             removeFocus();

@@ -1,6 +1,5 @@
 package com.gtnewhorizons.modularui.api.drawable;
 
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -467,27 +466,17 @@ public class GuiHelper {
     }
 
     private static void applyNEITooltipHandler(List<String> tooltip, ItemStack stack, ModularUIContext context) {
-        // GuiContainerManager.applyItemCountDetails(tooltip, stack);
+        GuiContainerManager.applyItemCountDetails(tooltip, stack);
 
         if (GuiContainerManager.getManager() == null) return;
         if (GuiContainerManager.shouldShowTooltip(context.getScreen())) {
-            GuiContainerManager.getManager();
-            Field tt;
-            try {
-                tt = GuiContainerManager.class.getDeclaredField("instanceTooltipHandlers");
-                tt.setAccessible(true);
-                for (IContainerTooltipHandler handler : (List<IContainerTooltipHandler>) tt
-                        .get(GuiContainerManager.getManager())) {
-                    tooltip = handler.handleItemTooltip(
-                            context.getScreen(),
-                            stack,
-                            context.getCursor().getX(),
-                            context.getCursor().getY(),
-                            tooltip);
-                }
-            } catch (NoSuchFieldException | IllegalAccessException e) {
-                throw new RuntimeException(e);
-            }
+            for (IContainerTooltipHandler handler : GuiContainerManager.getManager().instanceTooltipHandlers)
+                tooltip = handler.handleItemTooltip(
+                        context.getScreen(),
+                        stack,
+                        context.getCursor().getX(),
+                        context.getCursor().getY(),
+                        tooltip);
         }
     }
 }
