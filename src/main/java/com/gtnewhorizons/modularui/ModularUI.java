@@ -38,7 +38,7 @@ import cpw.mods.fml.relauncher.SideOnly;
 public class ModularUI {
 
     public static final String MODID = "modularui";
-    public static final String DEPENDENCIES = "required-after:NotEnoughItems@[2.3.50-GTNH,);"
+    public static final String DEPENDENCIES = "after:NotEnoughItems@[2.3.50-GTNH,);"
             + "after:hodgepodge@[2.0.0,);"
             + "after:gtnhlib@[0.2.7,);"
             + "before:gregtech";
