@@ -56,7 +56,6 @@ import codechicken.nei.api.TaggedInventoryArea;
 import codechicken.nei.guihook.GuiContainerManager;
 import codechicken.nei.guihook.IContainerDrawHandler;
 import codechicken.nei.guihook.IContainerInputHandler;
-import codechicken.nei.guihook.IContainerObjectHandler;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 
@@ -225,8 +224,10 @@ public class ModularGui extends GuiContainer implements INEIGuiHandler {
     private void drawItemStack(ItemStack stack, int x, int y, String altText) {
         GlStateManager.translate(0.0F, 0.0F, 32.0F);
         GlStateManager.enableDepth();
-        this.zLevel = 200.0F;
-        itemRender.zLevel = 200.0F;
+        int windowLayer = getTopWindowLayer();
+        float renderDepth = 120.0F * (windowLayer + 1) + 60.0F;
+        this.zLevel = renderDepth;
+        itemRender.zLevel = renderDepth;
         FontRenderer font = GuiHelper.getFontRenderer(stack);
         itemRender.renderItemAndEffectIntoGUI(font, mc.getTextureManager(), stack, x, y);
         itemRender.renderItemOverlayIntoGUI(
@@ -240,6 +241,15 @@ public class ModularGui extends GuiContainer implements INEIGuiHandler {
         this.zLevel = 0.0F;
         itemRender.zLevel = 0.0F;
         GlStateManager.disableDepth();
+    }
+
+    private int getTopWindowLayer() {
+        int i = 0;
+        for (ModularWindow window : getContext().getOpenWindowsReversed()) {
+            if (window == context.getCurrentWindow()) return i;
+            i++;
+        }
+        return 0;
     }
 
     @Override
@@ -334,14 +344,10 @@ public class ModularGui extends GuiContainer implements INEIGuiHandler {
     }
 
     protected boolean shouldRenderNEITooltip() {
-        // taken from GuiContainerManager#getStackMouseOver but don't check #getSlotMouseOver
-        // as it sees our slot even if it's disabled
-        for (IContainerObjectHandler objectHandler : GuiContainerManager.objectHandlers) {
-            ItemStack item = objectHandler
-                    .getStackUnderMouse(this, context.getCursor().getPos().x, context.getCursor().getPos().y);
-            if (item != null) return true;
-        }
-        return false;
+        Slot slot = GuiContainerManager.getSlotMouseOver(this);
+        // NEI will see slots through popup panel, so block them.
+        // Other than this case, any element in NEI can have tooltip.
+        return !(slot instanceof BaseSlot);
     }
 
     public void drawDebugScreen() {
