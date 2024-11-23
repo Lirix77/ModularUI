@@ -1,23 +1,7 @@
 package com.gtnewhorizons.modularui.api.widget;
 
-import java.awt.Dimension;
-import java.awt.Rectangle;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.stream.Collectors;
-
-import net.minecraft.network.PacketBuffer;
-import net.minecraft.util.StatCollector;
-
-import org.jetbrains.annotations.ApiStatus;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
+import codechicken.nei.recipe.GuiCraftingRecipe;
+import codechicken.nei.recipe.GuiUsageRecipe;
 import com.google.gson.JsonObject;
 import com.gtnewhorizons.modularui.ModularUI;
 import com.gtnewhorizons.modularui.api.GlStateManager;
@@ -31,13 +15,25 @@ import com.gtnewhorizons.modularui.api.screen.ModularWindow;
 import com.gtnewhorizons.modularui.common.internal.JsonHelper;
 import com.gtnewhorizons.modularui.common.internal.Theme;
 import com.gtnewhorizons.modularui.common.widget.FakeSyncWidget;
-
-import codechicken.nei.recipe.GuiCraftingRecipe;
-import codechicken.nei.recipe.GuiUsageRecipe;
 import cpw.mods.fml.common.Optional;
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
-import gregtech.api.util.GT_TooltipDataCache;
+import gregtech.api.util.GTTooltipDataCache;
+import net.minecraft.network.PacketBuffer;
+import net.minecraft.util.StatCollector;
+import org.jetbrains.annotations.ApiStatus;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.awt.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.function.Function;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * This class draws a functional element of ModularUI
@@ -899,7 +895,7 @@ public abstract class Widget {
     }
 
     @Optional.Method(modid = ModularUI.MODID_GT5U)
-    public Widget setGTTooltip(Supplier<GT_TooltipDataCache.TooltipData> tooltipDataGetter) {
+    public Widget setGTTooltip(Supplier<GTTooltipDataCache.TooltipData> tooltipDataGetter) {
         dynamicTooltip(() -> tooltipDataGetter.get().text);
         dynamicTooltipShift(() -> tooltipDataGetter.get().shiftText);
         return this;
