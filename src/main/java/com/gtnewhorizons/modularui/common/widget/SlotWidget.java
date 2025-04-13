@@ -481,6 +481,11 @@ public class SlotWidget extends Widget implements IVanillaSlot, Interactable, IS
      */
     @SideOnly(Side.CLIENT)
     protected void drawSlot(Slot slotIn, boolean drawStackSize) {
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS); // Сохраняем все состояния OpenGL
+        try {
+            GL11.glColor4f(1.0F, 1.0F, 1.0F, 1.0F); // Сбрасываем цвет
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glDisable(GL11.GL_BLEND);
         ItemStack itemstack = getItemStackForRendering(slotIn);
         boolean flag = false;
         boolean flag1 = slotIn == getGuiAccessor().getClickedSlot() && getGuiAccessor().getDraggedStack() != null
@@ -604,6 +609,9 @@ public class SlotWidget extends Widget implements IVanillaSlot, Interactable, IS
         GL11.glDisable(GL11.GL_BLEND);
         ModularGui.getItemRenderer().zLevel = 0.0F;
         getScreen().setZ(0f);
+        } finally {
+            GL11.glPopAttrib(); // Восстанавливаем состояния OpenGL
+        }
     }
 
     /**
